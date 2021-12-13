@@ -7,6 +7,8 @@ const originalBoxSize = 3;
 init();
 
 function init(){
+    stack=[];
+
     //scene
     scene = new THREE.Scene();
 
@@ -54,24 +56,22 @@ function init(){
     document.body.appendChild(renderer.domElement);
 }
 
-// Base
-// addLayer(0,0,originalBoxSize, originalBoxSize);
-function addLayer(x,z,width,depth,direction){
-    const y = boxHeight*stack.length; //add new brick
-    const layer = generateBox(x.y,z,width,depth);
+function addLayer(x, z, width, depth, direction) {
+    const y = boxHeight * stack.length; // Add the new box one layer higher
+    const layer = generateBox(x, y, z, width, depth, false);
     layer.direction = direction;
     stack.push(layer);
 }
 
 //generateBox
-function generateBox(x,y,z,width,depth){
-    const geometry = new THREE.BoxGeometry(width,boxHeight,depth);
-    const color = new THREE.Color(`hsl(${190+stack.length*4},100%,50%)`);
-    const material = new THREE.MeshLambertMaterial({color});
-    const mesh = new THREE.Mesh(geometry,material);
-    mesh.position.set(x,y,z);
-
-    scene.add(mesh);
+function generateBox(x, y, z, width, depth, falls) {
+  // ThreeJS
+  const geometry = new THREE.BoxGeometry(width, boxHeight, depth);
+  const color = new THREE.Color(`hsl(${190 + stack.length * 4}, 100%, 50%)`);
+  const material = new THREE.MeshLambertMaterial({ color });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(x, y, z);
+  scene.add(mesh);
 
     return{
         threejs: mesh,

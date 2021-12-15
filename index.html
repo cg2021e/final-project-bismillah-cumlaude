@@ -1,14 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Brick Stack</title>
-</head>
-<body>
-    <script src='node_modules/three/build/three.min.js'></script>
-    <script src='node_modules/cannon/build/cannon.min.js'></script>
-    <script  src="main.js"></script>
-</body>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="game-menu" class="game-screen">
+      <h1>Brick Stack</h1>
+      <p>Tap to play </p>
+    </div>
+    <div id="game-over-menu" class="game-screen">
+      <h1>Game Over!</h1>
+      <p>Click to continue</p>
+    </div>
+    <script
+      src="node_modules/three/build/three.min.js"
+    ></script>
+    <script
+      src="node_modules/cannon/build/cannon.min.js"
+    ></script>
+
+    <script src="main.js"></script>
+  </body>
 </html>

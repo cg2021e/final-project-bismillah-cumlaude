@@ -2,7 +2,11 @@ let camera, scene, renderer; //three Globals
 let world; //canonJS world
 const originalBoxSize = 3;
 
-const startPos = -5;
+const scoreElement = document.getElementById("score");
+const instructionsElement = document.getElementById("instructions");
+const resultsElement = document.getElementById("results");
+
+const startPos = -6;
 
 let stack = [],
   overhangs = [];
@@ -11,6 +15,11 @@ const boxHeight = 0.5; //height of each layer
 const resetScene = () => {
   stack = [];
   overhangs = [];
+
+  if (instructionsElement) instructionsElement.style.display = "none";
+  if (resultsElement) resultsElement.style.display = "none";
+  if (scoreElement) scoreElement.innerText = 0;
+
   if (world) {
     // Remove every object from world
     while (world.bodies.length > 0) {
@@ -64,14 +73,14 @@ const init = () => {
   const width = 10;
   const height = width * (window.innerHeight / window.innerWidth);
   camera = new THREE.OrthographicCamera(
-    -width / 2, //left 
-    width / 2,  //right
-    height / 2,  //top
-    -height / 2,  //bottom
-    1, //near
+    -width / 1, //left 
+    width / 1,  //right
+    height / 1,  //top
+    -height / 1,  //bottom
+    0, //near
     100 //far
   );
-  camera.position.set(4, 4, 4);
+  camera.position.set(5, 5, 5);
   camera.lookAt(0, 0, 0);
   
   //renderer
@@ -183,7 +192,7 @@ const cutBox = (
 };
 
 const animation = () => {
-  const speed = 0.15;
+  const speed = 0.2;
   const topLayer = stack[stack.length - 1];
 
   topLayer.threejs.position[topLayer.direction] += speed;
@@ -262,6 +271,7 @@ window.addEventListener("click", (event) => {
       const newDepth = direction === "z" ? overlap : topLayer.depth;
       const nextDirection = direction === "x" ? "z" : "x";
 
+      if (scoreElement) scoreElement.innerText = stack.length - 1;
       addLayer(nextX, nextZ, newWidth, newDepth, nextDirection);
 
     } else {
@@ -269,6 +279,7 @@ window.addEventListener("click", (event) => {
       console.log("Game over");
       gameOverMenu.style.display = "flex";
       gameStarted = false;
+      if (resultsElement && !autopilot) resultsElement.style.display = "flex";
     }
   }
 });

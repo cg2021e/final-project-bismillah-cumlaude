@@ -1,12 +1,12 @@
-let camera, scene, renderer;
-let world;
+let camera, scene, renderer; //three Globals
+let world; //canonJS world
 const originalBoxSize = 3;
 
 const startPos = -5;
 
 let stack = [],
   overhangs = [];
-const boxHeight = 0.5;
+const boxHeight = 0.5; //height of each layer
 
 const resetScene = () => {
   stack = [];
@@ -60,21 +60,26 @@ const init = () => {
   directionalLight.position.set(10, 20, 0);
   scene.add(directionalLight);
 
+  //camera 
   const width = 10;
   const height = width * (window.innerHeight / window.innerWidth);
   camera = new THREE.OrthographicCamera(
-    -width / 2,
-    width / 2,
-    height / 2,
-    -height / 2,
-    1,
-    100
+    -width / 2, //left 
+    width / 2,  //right
+    height / 2,  //top
+    -height / 2,  //bottom
+    1, //near
+    100 //far
   );
   camera.position.set(4, 4, 4);
   camera.lookAt(0, 0, 0);
+  
+  //renderer
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
+
+  //add it to Html
 
   document.body.appendChild(renderer.domElement);
 
@@ -92,7 +97,7 @@ const init = () => {
 };
 
 const addLayer = (x, z, width, depth, direction) => {
-  const y = boxHeight * stack.length;
+  const y = boxHeight * stack.length; //add the new box one layer higher
 
   const layer = generateBox(x, y, z, width, depth, false);
   layer.direction = direction;
@@ -101,12 +106,14 @@ const addLayer = (x, z, width, depth, direction) => {
 };
 
 const addOverHang = (x, z, width, depth) => {
-  const y = boxHeight * (stack.length - 1);
+  const y = boxHeight * (stack.length - 1); //add new box one the same layer 
   const overhang = generateBox(x, y, z, width, depth, true);
   overhangs.push(overhang);
 };
 
+//add box to scene
 const generateBox = (x, y, z, width, depth, falls) => {
+  //threeJs
   const geometry = new THREE.BoxGeometry(width, boxHeight, depth);
 
   const color = new THREE.Color(`hsl(${190 + stack.length * 4}, 100%, 50%)`);
@@ -117,7 +124,7 @@ const generateBox = (x, y, z, width, depth, falls) => {
 
   scene.add(mesh);
 
-  // Add to CannonJS
+  // Add to CannonJS, Replace shape to a smaller one (in CannonJS you can't just simply scale a shape)
   const shape = new CANNON.Box(
     new CANNON.Vec3(width / 2, boxHeight / 2, depth / 2)
   );
@@ -182,6 +189,7 @@ const animation = () => {
   topLayer.threejs.position[topLayer.direction] += speed;
   topLayer.cannonjs.position[topLayer.direction] += speed;
 
+  // 4 is the initial camera height
   if (camera.position.y < boxHeight * (stack.length - 2) + 4) {
     camera.position.y += speed;
   }
@@ -191,8 +199,8 @@ const animation = () => {
 };
 
 const updatePhysics = () => {
-  world.step(1 / 60);
-
+  world.step(1 / 60); //step by shysics world
+  // copy coordinates from Cannon.js to three.js
   overhangs.forEach((element) => {
     element.threejs.position.copy(element.cannonjs.position);
     element.threejs.quaternion.copy(element.cannonjs.quaternion);
@@ -248,13 +256,16 @@ window.addEventListener("click", (event) => {
       // Add a new layer of box
       const nextX = direction === "x" ? topLayer.threejs.position.x : startPos;
       const nextZ = direction === "z" ? topLayer.threejs.position.z : startPos;
-
+      
+      //Cut layer
       const newWidth = direction === "x" ? overlap : topLayer.width;
       const newDepth = direction === "z" ? overlap : topLayer.depth;
       const nextDirection = direction === "x" ? "z" : "x";
 
       addLayer(nextX, nextZ, newWidth, newDepth, nextDirection);
+
     } else {
+      //game over
       console.log("Game over");
       gameOverMenu.style.display = "flex";
       gameStarted = false;
